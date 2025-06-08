@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-// import { Menu, Instagram, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, Instagram, X } from "lucide-react";
+
+// Simple Button component to replace shadcn/ui import
+const Button = ({ children, onClick, className, size, ...props }) => {
+  return (
+    <button
+      onClick={onClick}
+      className={className}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 export default function Layout({ children }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
 
   const toggleSidebar = () => {
@@ -19,64 +31,83 @@ export default function Layout({ children }) {
     <div className="relative w-full h-screen bg-cover bg-center" 
          style={{ backgroundImage: "url('/bg-pallet.jpg')" }}>
       
-      {/* Mobile Menu Button */}
-      <div className="absolute top-4 left-4 z-50 md:hidden">
+      {/* Top Left Menu Button */}
+      <div className="absolute top-6 left-6 z-50">
         <Button 
           onClick={toggleSidebar}
-          className="bg-[rgba(0,0,0,0.7)] text-white hover:bg-[rgba(0,0,0,0.9)] p-2"
-          size="sm"
+          className="bg-[#8B6F47] hover:bg-[#7A5F3F] text-white p-3 rounded-full shadow-lg transition-all duration-200 flex items-center space-x-2"
         >
-          {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <Menu className="w-5 h-5" />
+          <span className="text-sm font-medium">Menu</span>
         </Button>
       </div>
 
-      {/* Overlay for mobile */}
+      {/* Center Logo/Branding */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-40 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-[#D4A574] mb-1 tracking-wider">
+          REKAYASA MAS
+        </h1>
+        <div className="border border-[#D4A574] px-4 py-1 rounded">
+          <p className="text-xs text-[#D4A574] font-medium tracking-widest">
+            WOOD PALLET SPECIALIST
+          </p>
+        </div>
+      </div>
+
+      {/* Top Right Buttons */}
+      <div className="absolute top-6 right-6 flex items-center space-x-3 z-40">
+        <Button 
+          className="bg-[#8B6F47] hover:bg-[#7A5F3F] text-white rounded-full px-6 py-3 text-sm font-semibold shadow-lg transition-all duration-200"
+          aria-label="Contact Us"
+        >
+          CONTACT US
+        </Button>
+        
+        <Button
+          className="bg-[#8B6F47] hover:bg-[#7A5F3F] text-white p-3 rounded-full shadow-lg transition-all duration-200"
+          aria-label="Instagram"
+        >
+          <Instagram className="w-4 h-4" />
+        </Button>
+      </div>
+
+      {/* Overlay for mobile sidebar */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={toggleSidebar}
         />
       )}
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full w-64 bg-[rgba(0,0,0,0.8)] backdrop-blur-sm 
-        text-white flex flex-col items-start p-6 space-y-6 z-50 transition-transform duration-300 ease-in-out
+        fixed top-0 left-0 h-full w-80 bg-[rgba(0,0,0,0.9)] backdrop-blur-sm 
+        text-white flex flex-col p-8 z-50 transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0 md:relative md:z-auto
       `}>
-        {/* Header with Menu Icon */}
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-3">
-            <div className="bg-[#7a553a] p-2 rounded-full shadow-lg">
-              <Menu className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white text-lg font-medium">Menu</span>
-          </div>
-          
-          {/* Close button for mobile */}
+        {/* Close button */}
+        <div className="flex justify-end mb-8">
           <Button 
             onClick={toggleSidebar}
-            className="md:hidden bg-transparent hover:bg-[rgba(255,255,255,0.1)] p-1"
-            size="sm"
+            className="bg-transparent hover:bg-[rgba(255,255,255,0.1)] p-2 rounded-full"
           >
-            <X className="w-4 h-4" />
+            <X className="w-6 h-6" />
           </Button>
         </div>
 
-        {/* Company Branding */}
-        <div className="w-full">
-          <h1 className="text-2xl font-bold text-amber-400 leading-tight">
+        {/* Company Branding in Sidebar */}
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold text-[#D4A574] leading-tight mb-4">
             REKAYASA MAS
           </h1>
-          <div className="border-t border-amber-400 w-full mt-2 mb-3" />
-          <p className="text-xs text-amber-300 font-medium tracking-wide">
+          <div className="border-t border-[#D4A574] w-full mb-4" />
+          <p className="text-sm text-[#D4A574] font-medium tracking-wide">
             WOOD PALLET SPECIALIST
           </p>
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col space-y-3 mt-8 w-full">
+        <nav className="flex flex-col space-y-6">
           {[
             { path: '/', label: 'Home' },
             { path: '/company', label: 'Company' },
@@ -87,44 +118,45 @@ export default function Layout({ children }) {
               key={path}
               to={path} 
               className={`
-                text-lg font-semibold px-3 py-2 rounded-md transition-all duration-200
+                text-xl font-medium px-4 py-3 rounded-md transition-all duration-200 border-l-4
                 ${isActivePage(path) 
-                  ? 'text-amber-400 bg-[rgba(255,255,255,0.1)]' 
-                  : 'text-white hover:text-amber-400 hover:bg-[rgba(255,255,255,0.05)]'
+                  ? 'text-[#D4A574] border-[#D4A574] bg-[rgba(212,165,116,0.1)]' 
+                  : 'text-white border-transparent hover:text-[#D4A574] hover:border-[#D4A574] hover:bg-[rgba(255,255,255,0.05)]'
                 }
               `}
-              onClick={() => window.innerWidth < 768 && setIsSidebarOpen(false)}
+              onClick={toggleSidebar}
             >
               {label}
             </Link>
           ))}
         </nav>
+
+        {/* Contact Info in Sidebar */}
+        <div className="mt-auto pt-8 border-t border-gray-700">
+          <p className="text-sm text-gray-400 mb-2">Hubungi Kami:</p>
+          <p className="text-[#D4A574] font-medium">+62 123 456 789</p>
+          <p className="text-[#D4A574] font-medium">info@rekayasamas.com</p>
+        </div>
       </div>
 
-      {/* Top Right Buttons */}
-      <div className="absolute top-6 right-6 flex items-center space-x-3 z-30">
-        <Button 
-          className="bg-[#5a3e2b] text-white hover:bg-[#7a553a] active:bg-[#4a2e1b] rounded-full px-6 py-2 text-sm font-semibold shadow-lg transition-all duration-200 hover:shadow-xl"
-          aria-label="Contact Us"
-        >
-          CONTACT US
-        </Button>
-        
-        <Button
-          className="bg-[#5a3e2b] text-white hover:bg-[#7a553a] active:bg-[#4a2e1b] p-3 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
-          aria-label="Instagram"
-        >
-          <Instagram className="w-4 h-4" />
-        </Button>
+      {/* Center Content - DISCOVER HERE Button */}
+      <div className="absolute inset-0 flex items-center justify-center z-30">
+        <div className="text-center">
+          <Button 
+            className="bg-transparent border-b-2 border-white text-white hover:border-[#D4A574] hover:text-[#D4A574] transition-all duration-300 pb-2 text-sm font-medium tracking-wider"
+            onClick={() => {
+              // Add smooth scroll or navigation logic here
+              console.log("Discover here clicked");
+            }}
+          >
+            DISCOVER HERE
+          </Button>
+        </div>
       </div>
 
       {/* Page Content */}
-      <div className={`
-        absolute top-0 right-0 bottom-0 overflow-y-auto transition-all duration-300
-        ${isSidebarOpen ? 'left-64' : 'left-0'} 
-        md:left-64
-      `}>
-        <div className="p-6 md:p-8 min-h-full">
+      <div className="absolute inset-0 overflow-y-auto">
+        <div className="min-h-full">
           {children}
         </div>
       </div>
